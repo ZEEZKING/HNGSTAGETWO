@@ -148,8 +148,13 @@ builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
 builder.Services.AddScoped<IOrganisationServices, OrganisationServices>();
 
+var connectionString = $"Host={Environment.GetEnvironmentVariable("RAILWAY_TCP_PROXY_DOMAIN")};" +
+                       $"Port={Environment.GetEnvironmentVariable("RAILWAY_TCP_PROXY_PORT")};" +
+                       $"Username={Environment.GetEnvironmentVariable("PGUSER")};" +
+                       $"Password={Environment.GetEnvironmentVariable("POSTGRES_PASSWORD")};" +
+                       $"Database={Environment.GetEnvironmentVariable("PGDATABASE")}";
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("connectionString")));
 
 builder.Services.AddAuthentication(options =>
 {
@@ -175,9 +180,10 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+
 //}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
